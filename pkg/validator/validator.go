@@ -50,6 +50,7 @@ type Validator interface {
 	ValidateResource(res resource.Resource) Result
 	Validate(filename string, r io.ReadCloser) []Result
 	ValidateWithContext(ctx context.Context, filename string, r io.ReadCloser) []Result
+	AddCustomRegistry(registry registry.Registry)
 }
 
 // Opts contains a set of options for the validator.
@@ -245,6 +246,10 @@ func (val *v) ValidateWithContext(ctx context.Context, filename string, r io.Rea
 // filename should be a name for the stream, such as a filename or stdin
 func (val *v) Validate(filename string, r io.ReadCloser) []Result {
 	return val.ValidateWithContext(context.Background(), filename, r)
+}
+
+func (val *v) AddCustomRegistry(registry registry.Registry) {
+	val.regs = append(val.regs, registry)
 }
 
 func downloadSchema(registries []registry.Registry, kind, version, k8sVersion string) (*jsonschema.Schema, error) {
